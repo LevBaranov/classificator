@@ -1,8 +1,11 @@
 class Classificator:
-    pass
 
-class Memory:   # Будем настраивать связь с базой данных. 
-    pass        # Хранить результаты, а также брать информацию для обучения.
+    def learn(self, data):
+        pass
+
+class Memory:
+    'Хранить результаты, а также предоставляет информацию для обучения.'   
+    pass
         
 if __name__ == '__main__':
     classificator = Classificator
