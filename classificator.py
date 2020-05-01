@@ -1,11 +1,13 @@
 class Classificator:
 
-    def learn(self, data):
+    def learn(data):
         pass
 
 class Memory:
     'Хранить результаты, а также предоставляет информацию для обучения.'   
-    pass
+
+    def get_data():
+        pass
         
 if __name__ == '__main__':
     classificator = Classificator
