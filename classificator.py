@@ -3,12 +3,20 @@ class Classificator:
     def learn(data):
         pass
 
+    def define_category(request):
+        pass
+
+
 class Memory:
-    'Хранить результаты, а также предоставляет информацию для обучения.'   
+    'Хранит результаты, а также предоставляет информацию для обучения.'   
 
     def get_data():
         pass
-        
+
+    def remember(request, respone):
+        pass
+
+     
 if __name__ == '__main__':
     classificator = Classificator
     memory = Memory
