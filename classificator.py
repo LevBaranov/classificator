@@ -1,5 +1,5 @@
 from sys import stderr
-from elasticsearch import Elasticsearch
+import elasticsearch 
 
 class ArgumentException(Exception):
     pass
@@ -8,14 +8,14 @@ class Classificator:
 
 
     def learn(data):
-        if(data):
+        if data:
             pass
         else:
             raise ArgumentException()
 
     def define_category(request):
-        if(request):
-            pass
+        if request:
+            return request
         else:
             raise ArgumentException()
 
@@ -44,17 +44,18 @@ class Memory:
                 data[category] = [string]
         return data
 
-    def remember(request, respone):
-        if(request and respone):
-            pass
+    def remember(self, request, respone):
+        if request and respone:
+            return respone
         else:
             raise ArgumentException()
     
     def _connect_elastic(self, address):
-        _es = Elasticsearch([address])
-        if _es.ping():
-            #print('Connect Established')
+        try:
+            _es = elasticsearch.Elasticsearch([address])
             return _es
+        except Exception as e:
+            raise e
 
 
 if __name__ == '__main__':
