@@ -18,8 +18,9 @@
 
 
 ## Библиотеки
-* PyBrain GIT и Home Page
-* numpy
+* PyBrain [GIT](https://github.com/pybrain/pybrain) и [Home Page](http://pybrain.org/docs/index.html)
+* [numpy](https://numpy.org/)
+* [elasticsearch](https://elasticsearch-py.readthedocs.io/en/master/index.html)
 
 ## Планируемый вариант работы:
 На вход подаём текст. 
