@@ -44,9 +44,9 @@ class Memory:
                 data[category] = [string]
         return data
 
-    def remember(self, request, respone):
-        if request and respone:
-            return respone
+    def remember(self, request, response):
+        if request and response:
+            return response
         else:
             raise ArgumentException()
     
@@ -64,8 +64,9 @@ if __name__ == '__main__':
         memory = Memory('http://localhost:9200')
         classificator.learn(memory.get_data())
         request = 'Не показывает канал матч';
-        respone = classificator.define_category(request)
-        memory.remember(request, respone)
-        print(respone)
+        response = classificator.define_category(request)
+        assert response == request  # Поменяю когда будет готов define_category()
+        memory.remember(request, response)
+        print(response)
     except Exception as e:
         print(type(e), file=stderr)
