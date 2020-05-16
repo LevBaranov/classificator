@@ -77,11 +77,11 @@ if __name__ == '__main__':
         print(memory.category)
         print(memory.all_words)
         print(data)
-        #classificator.learn(memory.get_data())
+        classificator.learn(memory.get_data())
         request = 'Не показывает канал матч';
-        #response = classificator.define_category(request)
-        #assert response == request  # Поменяю когда будет готов define_category()
-        #memory.remember(request, response)
-        #print(response)
+        response = classificator.define_category(request)
+        assert response == request  # Поменяю когда будет готов define_category()
+        memory.remember(request, response)
+        print(response)
     except Exception as e:
         print(type(e), file=stderr)
