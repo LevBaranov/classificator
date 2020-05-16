@@ -23,6 +23,12 @@ class Classificator:
 class Memory:
     'Хранит результаты, а также предоставляет информацию для обучения.'   
 
+    category = []
+
+    all_words = set()
+
+    category_words = dict() 
+
     def __init__(self, address):
         self.address = address
         self.es = self._connect_elastic(address)
@@ -34,15 +40,20 @@ class Memory:
         query = {"query": {"match_all": {}}}
         index_name = 'category'
         results = self.es.search(index=index_name, body=query, size=999)
-        data = dict()
+
         for hit in results['hits']['hits']:
             category = hit['_source']['category']
+            self.category.append(category)
             string = hit['_source']['string']
-            if data.get(category) is not None:
-                data[category].append(string)
+            words = {w.lower() for w in string.split(' ')}
+            self.all_words.update(words)
+
+            if self.category_words.get(category) is not None:
+                self.category_words[category].update(words)
             else:
-                data[category] = [string]
-        return data
+                self.category_words[category] = set(words)
+
+        return self.category_words
 
     def remember(self, request, response):
         if request and response:
@@ -62,11 +73,15 @@ if __name__ == '__main__':
     try:
         classificator = Classificator
         memory = Memory('http://localhost:9200')
-        classificator.learn(memory.get_data())
+        data = memory.get_data()
+        print(memory.category)
+        print(memory.all_words)
+        print(data)
+        #classificator.learn(memory.get_data())
         request = 'Не показывает канал матч';
-        response = classificator.define_category(request)
-        assert response == request  # Поменяю когда будет готов define_category()
-        memory.remember(request, response)
-        print(response)
+        #response = classificator.define_category(request)
+        #assert response == request  # Поменяю когда будет готов define_category()
+        #memory.remember(request, response)
+        #print(response)
     except Exception as e:
         print(type(e), file=stderr)
