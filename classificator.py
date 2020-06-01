@@ -14,10 +14,9 @@ class ArgumentException(Exception):
 class Classificator:
 
 
-    data_for_training = []
-    
     def learn(self):
         try:
+            self.data_for_training = []
             mem = Memory('http://localhost:9200')
             data = mem.get_data()
             categories = list(data.keys())
@@ -28,7 +27,7 @@ class Classificator:
             net = buildNetwork(
                 len(self.data_for_training[0][0]), 
                 15, 
-                1, 
+                len(categories), 
                 hiddenclass=SoftmaxLayer, 
                 recurrent=False
                 )
@@ -39,7 +38,7 @@ class Classificator:
                 )
             for data in self.data_for_training:
                 ds.addSample(data[0], data[1])
-
+            ds._convertToOneOfMany()
             trainer = BackpropTrainer(net, ds, momentum=0.1, learningrate=0.01, verbose=True)
             trainer.trainUntilConvergence(maxEpochs=500)
             NetworkWriter.writeToFile(net, 'net.xml')
@@ -47,10 +46,11 @@ class Classificator:
             raise e
         return net
 
-    def define_category(self, request):
+    def define_category(self, request, categories):
         if type(request) == Request:
             net = NetworkReader.readFrom('net.xml')
-            return net.activate(request.token)
+            output = list(net.activate(request.token))
+            return categories[output.index(max(output))]
         else:
             raise ArgumentException()
 
@@ -89,9 +89,9 @@ class Memory:
                     )
         return self.data_templates
 
-    def remember(self, request, response):
-        if request and response:
-            return response
+    def remember(self, request):
+        if type(request) == Request:
+            pass 
         else:
             raise ArgumentException()
     
@@ -122,22 +122,22 @@ class Request:
                 token_string.append(0)
         return token_string
 
+    def set_category(self, category):
+        self.category = category
+
 
 if __name__ == '__main__':
-    #try:
+    try:
         classificator = Classificator()
         memory = Memory('http://localhost:9200')
         data = memory.get_data()
         all_words = memory.all_words
-        category = list(data.keys())
-        #print(data)
+        categories = list(data.keys())
         print(classificator.learn())
         request = Request('нет изображение на камере', all_words);
-        response = classificator.define_category(request)
-        #assert response == request  # Поменяю когда будет готов define_category()
-        #memory.remember(request, response)
-        print(category)
-        print(response)
-        print(category[int(response)])
-    #except Exception as e:
-    #    print(e, file=stderr)
+        response = classificator.define_category(request, categories)
+        assert response == 'Настроить камеру'
+        request.set_category(response)
+        memory.remember(request)
+    except Exception as e:
+        print(e, file=stderr)
